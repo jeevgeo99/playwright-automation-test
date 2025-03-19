@@ -88,28 +88,28 @@ async isFootballLinkItalic(): Promise<boolean> {
 
 
 
-// async clickFirstArticle() {
-//   try {
-//     console.log('Waiting for the first article link...');
+async clickFirstArticle() {
+  try {
+    console.log('Waiting for the first article link...');
     
-//     // Ensure the locator has the correct value before calling `waitFor`
-//     if (this.firstArticleLink) {
-//       // Wait for up to 15 seconds for the article link to be visible
-//       await this.firstArticleLink.waitFor({ state: 'visible', timeout: 15000 }); 
-//       console.log('Scrolling into view...');
-//       // Ensure the link is in view before clicking
-//       await this.firstArticleLink.scrollIntoViewIfNeeded();
+    // Ensure the locator has the correct value before calling `waitFor`
+    if (this.firstArticleLink) {
+      // Wait for up to 15 seconds for the article link to be visible
+      await this.firstArticleLink.waitFor({ state: 'visible', timeout: 15000 }); 
+      console.log('Scrolling into view...');
+      // Ensure the link is in view before clicking
+      await this.firstArticleLink.scrollIntoViewIfNeeded();
 
-//       console.log('Clicking the first article...');
-//       await this.firstArticleLink.click(); // Click on the article link
-//     } else {
-//       console.error('firstArticleLink is undefined!');
-//     }
-//   } catch (error) {
-//     console.error('Error while clicking the first article:', error);
-//     throw error; // Re-throw the error to be caught by the test
-//   }
-// }
+      console.log('Clicking the first article...');
+      await this.firstArticleLink.click(); // Click on the article link
+    } else {
+      console.error('firstArticleLink is undefined!');
+    }
+  } catch (error) {
+    console.error('Error while clicking the first article:', error);
+    throw error; // Re-throw the error to be caught by the test
+  }
+}
 
 
 
