@@ -3,10 +3,12 @@ import { Page, Locator } from '@playwright/test';
 export class HomePage {
   page: Page;
   readonly firstArticleLink: Locator;
+  readonly premierLeagueLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.firstArticleLink = this.page.locator('.articletext a');
+    this.premierLeagueLink = this.page.locator('.page-header.bdrgr2 //ul[contains(@class, "nav-primary")]//li[contains(@class, "sport")]//a[@href="/sport/premierleague/index.html"]');
   }
 
   async navigateToHomePage() {
@@ -112,16 +114,15 @@ async isFootballLinkItalic(): Promise<boolean> {
 
 
 
-// Click on the Premier League link from the primary navigation
 async clickPremierLeagueLink() {
-  const premierLeagueLink = this.page.locator('//ul[contains(@class, "nav-primary")]//li[contains(@class, "sport")]//a[@href="/sport/premierleague/index.html"]');
+  const premierLeagueLink = this.page.locator('.page-header.bdrgr2 //ul[contains(@class, "nav-primary")]//li[contains(@class, "sport")]//a[@href="/sport/premierleague/index.html"]');
   await premierLeagueLink.waitFor({ state: 'visible', timeout: 60000 });
   await premierLeagueLink.click();
 }
 
-// Verify if the Premier League table is visible
+// Method to verify if the Premier League table is visible after navigating to the page
 async isPremierLeagueTableVisible(): Promise<boolean> {
-  const premierLeagueTable = this.page.locator('div.competitionTable_2Shs1.displayMode-extraSmall_3otUd');
+  const premierLeagueTable = this.page.locator('.page-header.bdrgr2 div.competitionTable_2Shs1.displayMode-extraSmall_3otUd');
   return premierLeagueTable.isVisible();
 }
 
