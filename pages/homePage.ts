@@ -42,28 +42,16 @@ export class HomePage {
   }
 
 
-  // Method to click on a primary navigation link
   async clickPrimaryNavigationLink(linkText: string) {
     await this.page.locator(`//ul[contains(@class, 'nav-primary')]//li[contains(@class, 'sport')]//a[text()='${linkText}']`).first().click();
   }
 
-  // Method to get the color of a primary navigation link (e.g., "Sport")
   async getNavLinkColor(linkText: string): Promise<string> {
     const color = await this.page.locator(`//ul[contains(@class, 'nav-primary')]//li[contains(@class, 'sport')]//a[text()='${linkText}']`).evaluate(el => {
       return window.getComputedStyle(el).color;
     });
     return color;
   }
-
-  // // Method to get the color of the "Football" secondary navigation link
-  // async getFootballSecondaryNavColor(): Promise<string> {
-  //   const footballColor = await this.page.locator('li.first a[href*="/sport/football"]').evaluate(el => {
-  //     return window.getComputedStyle(el).color;
-  //   });
-  //   return footballColor;
-  // }
-
-
 
   async getFootballSecondaryNavColor(): Promise<string> {
     // Refined locator to get the first "Football" link within the secondary navigation
@@ -76,9 +64,7 @@ export class HomePage {
     return footballColor;
   }
 
-  // Method to get the color of the "Sport" primary navigation link
   async getSportPrimaryNavColor(): Promise<string> {
-    // Refined locator to get the "Sport" link within the primary navigation
     const sportLink = await this.page.locator('ul.nav-primary li.sport a').first();
 
     const sportColor = await sportLink.evaluate(el => {
@@ -113,12 +99,9 @@ async clickFirstArticle() {
   try {
     console.log('Waiting for the first article link...');
     
-    // Ensure the locator has the correct value before calling `waitFor`
     if (this.firstArticleLink) {
-      // Wait for up to 15 seconds for the article link to be visible
       await this.firstArticleLink.waitFor({ state: 'visible', timeout: 15000 }); 
       console.log('Scrolling into view...');
-      // Ensure the link is in view before clicking
       await this.firstArticleLink.scrollIntoViewIfNeeded();
 
       console.log('Clicking the first article...');
@@ -132,20 +115,6 @@ async clickFirstArticle() {
   }
 }
 
-
-
-
-// async clickPremierLeagueLink() {
-//   const premierLeagueLink = this.page.locator('.page-header.bdrgr2 //ul[contains(@class, "nav-primary")]//li[contains(@class, "sport")]//a[@href="/sport/premierleague/index.html"]');
-//   await premierLeagueLink.waitFor({ state: 'visible', timeout: 60000 });
-//   await premierLeagueLink.click();
-// }
-
-// // Method to verify if the Premier League table is visible after navigating to the page
-// async isPremierLeagueTableVisible(): Promise<boolean> {
-//   const premierLeagueTable = this.page.locator('.page-header.bdrgr2 div.competitionTable_2Shs1.displayMode-extraSmall_3otUd');
-//   return premierLeagueTable.isVisible();
-// }
 
 async clickPremierLeagueLink() {
   await this.premierLeagueLink.waitFor({ state: 'visible', timeout: 60000 });
@@ -233,6 +202,34 @@ async resizeVideo() {
   await expect(this.videoPlayer).not.toHaveClass(/vjs-fullscreen/); 
 }
 
+// Method to navigate to the Premier League standings page
+async navigateToPremierLeagueStandings() {
+  await this.premierLeagueLink.waitFor({ state: 'visible', timeout: 60000 });
+  await this.premierLeagueLink.click();
+}
+
+async scrapePremierLeagueStandings() {
+  // Wait for the table to load
+  await this.page.waitForSelector('tbody');
+
+  // Extract Premier League standings (position, team, points)
+  const liverpoolData = await this.page.$$eval('tr.competitionTableRow_3Nd43', (rows) => {
+    return rows.map((row) => {
+      // Get the position, team name, and points from the table
+      const position = row.querySelector('td.pos_3b93p')?.textContent?.trim();
+      const name = row.querySelector('td.team-long_3K-tX')?.textContent?.trim();
+      const points = row.querySelector('td.score-pts_TNAV7')?.textContent?.trim();
+
+      return { position, name, points };
+    });
+  });
+
+  // Find Liverpool's row and return its data
+  const liverpool = liverpoolData.find(team => team.name?.toLowerCase() === 'liverpool');
+
+  console.log('Liverpool Data:', liverpool);
+  return liverpool;
+}
 
 }
 
