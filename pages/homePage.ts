@@ -10,6 +10,8 @@ export class HomePage {
   readonly galleryImage: Locator;
   readonly facebookShareButton: Locator;
   readonly sportsVideoThumbnail: Locator
+  readonly videoResizeButton: Locator;
+  readonly videoPlayer: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -17,6 +19,11 @@ export class HomePage {
     this.premierLeagueLink = this.page.locator('xpath=//div[@class="page-header bdrgr2"]//ul[contains(@class, "nav-primary")]//li[contains(@class, "sport")]//a[@href="/sport/premierleague/index.html"]');
     this.facebookShareButton = this.page.locator('.article-icon-links-container .facebook button');
     this.sportsVideoThumbnail = page.locator('.mostRecent-3KtwA.desktop-XiVpc .videos-2MBW_ a .thumbContainer-345kC').first();
+    
+    // Video resize locators
+    this.videoResizeButton = this.page.locator('.vjs-control.mol-fe-vjs-full-size-control');
+    this.videoPlayer = this.page.locator('.vjs-player'); // Adjust if needed based on actual video player class
+    
     // Gallery locators
     this.galleryIcon = this.page.locator('.openGalleryButton-FskZb');
     this.prevArrow = this.page.locator('.previousButton-dQPhE');
@@ -201,6 +208,29 @@ async navigateGallery() {
 async SportsVideoThumbnail() {
   await this.sportsVideoThumbnail.waitFor({ state: 'visible' });
   await this.sportsVideoThumbnail.click();
+}
+
+async clickFirstVideo() {
+  await this.sportsVideoThumbnail.waitFor({ state: 'visible', timeout: 10000 });
+  await this.sportsVideoThumbnail.click();
+}
+
+async resizeVideo() {
+  await this.videoResizeButton.waitFor({ state: 'visible', timeout: 5000 });
+  
+  // Click to expand video
+  await this.videoResizeButton.click();
+  await this.page.waitForTimeout(2000); // Give time for full-screen transition
+
+  // Verify video is full screen
+  await expect(this.videoPlayer).toHaveClass(/vjs-fullscreen/); 
+
+  // Click again to collapse video
+  await this.videoResizeButton.click();
+  await this.page.waitForTimeout(2000); 
+
+  // Verify video is not full screen
+  await expect(this.videoPlayer).not.toHaveClass(/vjs-fullscreen/); 
 }
 
 
