@@ -35,7 +35,6 @@ export class HomePage {
   async navigateToHomePage() {
     await this.page.goto('https://www.dailymail.co.uk/home/index.html');
   }
-
     async getLastUpdatedDate(): Promise<string> {
     const lastUpdatedElement = await this.page.locator('div.h1-page-last-updated span', { hasText: /Last updated:/ }).innerText();
     return lastUpdatedElement;
@@ -56,11 +55,9 @@ export class HomePage {
   async getFootballSecondaryNavColor(): Promise<string> {
     // Refined locator to get the first "Football" link within the secondary navigation
     const footballLink = await this.page.locator('li.first a[href="/sport/football/index.html"]').first();
-
     const footballColor = await footballLink.evaluate(el => {
       return window.getComputedStyle(el).color; // Get the color of the link
     });
-
     return footballColor;
   }
 
@@ -70,7 +67,6 @@ export class HomePage {
     const sportColor = await sportLink.evaluate(el => {
       return window.getComputedStyle(el).color; // Get the color of the link
     });
-
     return sportColor;
   }
 
@@ -78,22 +74,16 @@ export class HomePage {
 // Method to click on the Football link
 async clickFootballLink() {
   const footballLink = this.page.locator('li.first a[href="/sport/football/index.html"]');
-  
   await footballLink.waitFor({ state: 'visible', timeout: 60000 });  
   await footballLink.click();
 }
 
 async isFootballLinkItalic(): Promise<boolean> {
   const footballLink = await this.page.locator('li.first a[href="/sport/football/index.html"]');
-  
   await footballLink.waitFor({ state: 'visible', timeout: 60000 });
-  
   const fontStyle = await footballLink.evaluate(el => window.getComputedStyle(el).fontStyle);
   return fontStyle === 'italic';
 }
-
-
-
 
 async clickFirstArticle() {
   try {
@@ -115,7 +105,6 @@ async clickFirstArticle() {
   }
 }
 
-
 async clickPremierLeagueLink() {
   await this.premierLeagueLink.waitFor({ state: 'visible', timeout: 60000 });
   await this.premierLeagueLink.click();
@@ -125,7 +114,6 @@ async isPremierLeagueTableVisible(): Promise<boolean> {
   const premierLeagueTable = this.page.locator('.page-header.bdrgr2 div.competitionTable_2Shs1.displayMode-extraSmall_3otUd');
   return premierLeagueTable.isVisible();
 }
-
 
 async openGallery() {
   await this.galleryIcon.waitFor({ state: 'visible', timeout: 10000 });
@@ -148,7 +136,6 @@ async navigateGallery() {
   await this.nextArrow.waitFor({ state: 'visible', timeout: 10000 });
   await this.nextArrow.click();
   await this.page.waitForTimeout(2000); // Wait for image to change
-
   const secondImageSrc = await this.galleryImage.getAttribute('src');
   expect(firstImageSrc).not.toEqual(secondImageSrc);
 
@@ -160,8 +147,6 @@ async navigateGallery() {
   const finalImageSrc = await this.galleryImage.getAttribute('src');
   expect(finalImageSrc).toEqual(firstImageSrc);
 }
-
-
 
  // Click on the Facebook share icon and verify it opens Facebook
  async clickFacebookShare() {
@@ -223,10 +208,8 @@ async scrapePremierLeagueStandings() {
       return { position, name, points };
     });
   });
-
   // Find Liverpool's row and return its data
   const liverpool = liverpoolData.find(team => team.name?.toLowerCase() === 'liverpool');
-
   console.log('Liverpool Data:', liverpool);
   return liverpool;
 }
