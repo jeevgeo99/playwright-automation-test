@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 
 test('Verify Gallery Arrows and Navigation', async ({ page }) => {
-  // Navigate to the page where the gallery exists
   await page.goto('https://www.dailymail.co.uk');  
 
   const galleryButton = page.locator('.openGalleryButton-FskZb');
@@ -13,12 +12,8 @@ test('Verify Gallery Arrows and Navigation', async ({ page }) => {
   const galleryImages = page.locator('.slide-xw_1h img');
 
   const totalImages = await galleryImages.count();
-
-  expect(totalImages).toBeGreaterThan(0); // Ensure there are images
-
-  // Check the first image
+  expect(totalImages).toBeGreaterThan(0); 
   let firstImageSrc = await galleryImages.nth(0).getAttribute('src');
-
   const previousButton = page.locator('.previousButton-dQPhE');
   const nextButton = page.locator('.nextButton-F7kzW');
 
@@ -34,26 +29,25 @@ test('Verify Gallery Arrows and Navigation', async ({ page }) => {
   await nextButton.click();
 
   const secondImageSrc = await galleryImages.nth(1).getAttribute('src');
-  expect(secondImageSrc).not.toBe(firstImageSrc); // Ensure that the image changed
+  expect(secondImageSrc).not.toBe(firstImageSrc); 
 
   await previousButton.click();
 
   const firstImageAfterPrev = await galleryImages.nth(0).getAttribute('src');
-  expect(firstImageAfterPrev).toBe(firstImageSrc); // Ensure the image returned to the first one
+  expect(firstImageAfterPrev).toBe(firstImageSrc); 
 
   isPreviousDisabled = await previousButton.getAttribute('disabled');
-  expect(isPreviousDisabled).toBeFalsy(); // The Previous button should be enabled after clicking Next
+  expect(isPreviousDisabled).toBeFalsy(); 
 
   await nextButton.click();
-
   let isNextDisabledAfterNext = await nextButton.getAttribute('disabled');
-  expect(isNextDisabledAfterNext).toBeFalsy(); // The Next button should be enabled when there are more images
+  expect(isNextDisabledAfterNext).toBeFalsy(); 
 
   const lastImageSrc = await galleryImages.nth(totalImages - 1).getAttribute('src');
-  await nextButton.click(); // Go to the last image
+  await nextButton.click(); 
   const lastImageSrcAfterClick = await galleryImages.nth(totalImages - 1).getAttribute('src');
-  expect(lastImageSrcAfterClick).toBe(lastImageSrc); // Ensure we're at the last image
+  expect(lastImageSrcAfterClick).toBe(lastImageSrc); 
 
   isNextDisabledAfterNext = await nextButton.getAttribute('disabled');
-  expect(isNextDisabledAfterNext).toBeTruthy(); // Next button should be disabled on the last image
+  expect(isNextDisabledAfterNext).toBeTruthy(); 
 });

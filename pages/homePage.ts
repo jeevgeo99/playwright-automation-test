@@ -22,7 +22,7 @@ export class HomePage {
     
     // Video resize locators
     this.videoResizeButton = this.page.locator('.vjs-control.mol-fe-vjs-full-size-control');
-    this.videoPlayer = this.page.locator('.vjs-player'); // Adjust if needed based on actual video player class
+    this.videoPlayer = this.page.locator('.vjs-player'); 
     
     // Gallery locators
     this.galleryIcon = this.page.locator('.openGalleryButton-FskZb');
@@ -53,10 +53,9 @@ export class HomePage {
   }
 
   async getFootballSecondaryNavColor(): Promise<string> {
-    // Refined locator to get the first "Football" link within the secondary navigation
     const footballLink = await this.page.locator('li.first a[href="/sport/football/index.html"]').first();
     const footballColor = await footballLink.evaluate(el => {
-      return window.getComputedStyle(el).color; // Get the color of the link
+      return window.getComputedStyle(el).color; 
     });
     return footballColor;
   }
@@ -65,7 +64,7 @@ export class HomePage {
     const sportLink = await this.page.locator('ul.nav-primary li.sport a').first();
 
     const sportColor = await sportLink.evaluate(el => {
-      return window.getComputedStyle(el).color; // Get the color of the link
+      return window.getComputedStyle(el).color; 
     });
     return sportColor;
   }
@@ -95,13 +94,13 @@ async clickFirstArticle() {
       await this.firstArticleLink.scrollIntoViewIfNeeded();
 
       console.log('Clicking the first article...');
-      await this.firstArticleLink.click(); // Click on the article link
+      await this.firstArticleLink.click(); 
     } else {
       console.error('firstArticleLink is undefined!');
     }
   } catch (error) {
     console.error('Error while clicking the first article:', error);
-    throw error; // Re-throw the error to be caught by the test
+    throw error; 
   }
 }
 
@@ -200,7 +199,6 @@ async scrapePremierLeagueStandings() {
   // Extract Premier League standings (position, team, points)
   const liverpoolData = await this.page.$$eval('tr.competitionTableRow_3Nd43', (rows) => {
     return rows.map((row) => {
-      // Get the position, team name, and points from the table
       const position = row.querySelector('td.pos_3b93p')?.textContent?.trim();
       const name = row.querySelector('td.team-long_3K-tX')?.textContent?.trim();
       const points = row.querySelector('td.score-pts_TNAV7')?.textContent?.trim();

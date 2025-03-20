@@ -12,12 +12,10 @@ test('Verify Last Updated Date and Navigation Color', async ({ page }) => {
   expect(lastUpdated).toMatch(dateFormat);
 
   await homePage.clickPrimaryNavigationLink('Sports');
-
   const sportsColor = await homePage.getNavLinkColor('Sports');
   const footballColor = await homePage.getFootballSecondaryNavColor();
   console.log('Sports Primary Navigation Color:', sportsColor);
   console.log('Football Secondary Navigation Color:', footballColor);
-
   expect(sportsColor).toBe(footballColor);
 
 
