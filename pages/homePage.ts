@@ -1,14 +1,28 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator,expect } from '@playwright/test';
 
 export class HomePage {
   page: Page;
   readonly firstArticleLink: Locator;
   readonly premierLeagueLink: Locator;
+  readonly galleryIcon: Locator;
+  readonly prevArrow: Locator;
+  readonly nextArrow: Locator;
+  readonly galleryImage: Locator;
+  readonly facebookShareButton: Locator;
+  readonly sportsVideoThumbnail: Locator
 
   constructor(page: Page) {
     this.page = page;
     this.firstArticleLink = this.page.locator('.articletext a');
-    this.premierLeagueLink = this.page.locator('.page-header.bdrgr2 //ul[contains(@class, "nav-primary")]//li[contains(@class, "sport")]//a[@href="/sport/premierleague/index.html"]');
+    this.premierLeagueLink = this.page.locator('xpath=//div[@class="page-header bdrgr2"]//ul[contains(@class, "nav-primary")]//li[contains(@class, "sport")]//a[@href="/sport/premierleague/index.html"]');
+    this.facebookShareButton = this.page.locator('.article-icon-links-container .facebook button');
+    this.sportsVideoThumbnail = page.locator('.mostRecent-3KtwA.desktop-XiVpc .videos-2MBW_ a .thumbContainer-345kC').first();
+    // Gallery locators
+    this.galleryIcon = this.page.locator('.openGalleryButton-FskZb');
+    this.prevArrow = this.page.locator('.previousButton-dQPhE');
+    this.nextArrow = this.page.locator('.nextButton-F7kzW');
+    this.galleryImage = this.page.locator('.galleryWrapper-rsaa8 .image-ldeCw.fitImage-ejVJJ');
+
   }
 
   async navigateToHomePage() {
@@ -72,7 +86,7 @@ export class HomePage {
 async clickFootballLink() {
   const footballLink = this.page.locator('li.first a[href="/sport/football/index.html"]');
   
-  await footballLink.waitFor({ state: 'visible', timeout: 60000 });  // Increase the timeout if necessary
+  await footballLink.waitFor({ state: 'visible', timeout: 60000 });  
   await footballLink.click();
 }
 
@@ -114,20 +128,82 @@ async clickFirstArticle() {
 
 
 
+// async clickPremierLeagueLink() {
+//   const premierLeagueLink = this.page.locator('.page-header.bdrgr2 //ul[contains(@class, "nav-primary")]//li[contains(@class, "sport")]//a[@href="/sport/premierleague/index.html"]');
+//   await premierLeagueLink.waitFor({ state: 'visible', timeout: 60000 });
+//   await premierLeagueLink.click();
+// }
+
+// // Method to verify if the Premier League table is visible after navigating to the page
+// async isPremierLeagueTableVisible(): Promise<boolean> {
+//   const premierLeagueTable = this.page.locator('.page-header.bdrgr2 div.competitionTable_2Shs1.displayMode-extraSmall_3otUd');
+//   return premierLeagueTable.isVisible();
+// }
+
 async clickPremierLeagueLink() {
-  const premierLeagueLink = this.page.locator('.page-header.bdrgr2 //ul[contains(@class, "nav-primary")]//li[contains(@class, "sport")]//a[@href="/sport/premierleague/index.html"]');
-  await premierLeagueLink.waitFor({ state: 'visible', timeout: 60000 });
-  await premierLeagueLink.click();
+  await this.premierLeagueLink.waitFor({ state: 'visible', timeout: 60000 });
+  await this.premierLeagueLink.click();
 }
 
-// Method to verify if the Premier League table is visible after navigating to the page
 async isPremierLeagueTableVisible(): Promise<boolean> {
   const premierLeagueTable = this.page.locator('.page-header.bdrgr2 div.competitionTable_2Shs1.displayMode-extraSmall_3otUd');
   return premierLeagueTable.isVisible();
 }
 
 
+async openGallery() {
+  await this.galleryIcon.waitFor({ state: 'visible', timeout: 10000 });
+  await this.galleryIcon.click();
+}
 
+async isGalleryNavigationVisible(): Promise<boolean> {
+  await this.prevArrow.waitFor({ state: 'visible', timeout: 10000 });
+  await this.nextArrow.waitFor({ state: 'visible', timeout: 10000 });
+
+  return (await this.prevArrow.isVisible()) && (await this.nextArrow.isVisible());
+}
+
+async navigateGallery() {
+  await this.openGallery();
+
+  const firstImageSrc = await this.galleryImage.getAttribute('src');
+  
+  // Click Next
+  await this.nextArrow.waitFor({ state: 'visible', timeout: 10000 });
+  await this.nextArrow.click();
+  await this.page.waitForTimeout(2000); // Wait for image to change
+
+  const secondImageSrc = await this.galleryImage.getAttribute('src');
+  expect(firstImageSrc).not.toEqual(secondImageSrc);
+
+  // Click Previous
+  await this.prevArrow.waitFor({ state: 'visible', timeout: 10000 });
+  await this.prevArrow.click();
+  await this.page.waitForTimeout(2000); // Wait for image to change back
+
+  const finalImageSrc = await this.galleryImage.getAttribute('src');
+  expect(finalImageSrc).toEqual(firstImageSrc);
+}
+
+
+
+ // Click on the Facebook share icon and verify it opens Facebook
+ async clickFacebookShare() {
+  const [newPage] = await Promise.all([
+    this.page.waitForEvent('popup'),
+    this.facebookShareButton.click(),
+  ]);
+  expect(newPage.url()).toContain('facebook.com/sharer.php');
+  console.log('Facebook share page opened successfully.');
+}
+
+//most watched sports video
+async SportsVideoThumbnail() {
+  await this.sportsVideoThumbnail.waitFor({ state: 'visible' });
+  await this.sportsVideoThumbnail.click();
+}
 
 
 }
+
+
